@@ -32,3 +32,4 @@ The script can be found at `/home/pi/Lightgun/configedit/sindenconfigedit.sh`.
 This tool is still a work-in-progress.  Everything contained within at this time is fully functional but there are future plans to include:
 - Button map editing
 - Transfering of recoil/camera/button settings between configs.
+- (need to) add a reminder message to restart the guns for changes to take effect.
