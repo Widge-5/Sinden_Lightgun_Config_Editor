@@ -3,7 +3,7 @@
 ######################################################################
 ##
 ##   Config Editor for Sinden Lightgun
-##   v0.03    January 2023
+##   v1.00    January 2023
 ##   -- By Widge
 ##
 ##   For use with Sinden v1.8 config files
