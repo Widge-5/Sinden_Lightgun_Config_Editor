@@ -17,7 +17,7 @@ This will download the script to your `/home/pi` folder and make it executable. 
 
 When you run the script you will be asked whether your Sinden start scripts are in the Sinden group (for BB9) or the Ports group (for BB8).
 
-The script will then download the file needed and install them in their appropriate locations.
+The script will then download the files needed and install them in their appropriate locations.
 
 The install script will offer to delete itself then you will be prompted to restart EmulationStation
 
