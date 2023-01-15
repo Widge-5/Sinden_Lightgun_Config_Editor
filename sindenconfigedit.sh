@@ -369,7 +369,7 @@ function recoilchoosecfggroup(){
   selection=$(dialog --title "$title" --backtitle "$backtitle" --menu \
       "\nWhich config group would you like to view and edit?" \
       20 70 3 \
-      "1"  "No recoil" \
+      "1"  "No Recoil" \
       "2"  "Single Recoil" \
       "3"  "Auto Recoil" \
       3>&1 1>&2 2>&3 )
@@ -669,7 +669,7 @@ function makebackup(){
   title="Make a Backup"
   selection=$(dialog --title "$title" --backtitle "$backtitle" --menu \
       "\n$sourcename\n\nWhich $1 config file would you like to backup?" \
-      20 70 18 \
+      30 70 18 \
       "1"  "$name_P1_norm" \
       "2"  "$name_P1_reco" \
       "3"  "$name_P1_auto" \
