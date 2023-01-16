@@ -1,5 +1,4 @@
 #!/bin/bash
-
 ######################################################################################################
 ##
 ##  Installer for "Config Editor for Sinden Lightgun"
@@ -8,13 +7,27 @@
 ##
 ######################################################################################################
 
+thisfile=$(echo "$PWD/"`basename "$0"`)
+
 repo="https://github.com/Widge-5/Sinden_Lightgun_Config_Editor/archive/refs/heads/main.zip"
 tmpfolder="/home/pi/slgce_install"
 destfolder="/home/pi/Lightgun/configedit"
 sindenfolder="/home/pi/RetroPie/roms"
-thisfile=$(echo "$PWD/"`basename "$0"`)
+title="BareBones Screen Aspect Adaptation Utility"
 
-title="BareBones Screen Aspect Adaptation Utility (v1.02)"
+
+
+function rootcheck() {
+  #- Script must be run as root
+  if [[ $EUID > 0 ]]; then
+    colourecho cLRED "ERROR: Script must be run as root: eg: \"sudo $thisfile\""
+    exit 0
+  else	
+    return
+  fi
+}
+
+
 
 function colourecho(){
     _nc="\033[0m"
@@ -41,6 +54,7 @@ function colourecho(){
 }
 
 
+
 function downloader() {
   rm -rf $2
   mkdir $2
@@ -52,12 +66,15 @@ function downloader() {
   unzip -q main.zip
 }
 
+
+
 function tidyup(){
   echo "Cleaning up...."
   cd /home/pi
   rm -rf $1
   echo "Done."
 }
+
 
 
 function dloverlays() {
@@ -67,6 +84,7 @@ function dloverlays() {
   cp *.* /opt/retropie/configs/all/retroarch/overlay
   cd /home/pi
 }
+
 
 
 function main() {
@@ -96,7 +114,6 @@ echo $thisfile
   cp -pf "$tmpfolder/Sinden_Lightgun_Config_Editor-main/tsandcs.txt" $destfolder
   cp -pf "$tmpfolder/Sinden_Lightgun_Config_Editor-main/Sinden Lightgun Config Editor.sh" $sindenfolder
   tidyup "$tmpfolder"
-
   colourecho cLCYAN  "Install completed"
   while true ; do
     colourecho cLCYAN  "Do you want to delete this instaler?"
@@ -114,4 +131,9 @@ echo $thisfile
   colourecho cLRED "Now restart EmulationStation"
 }
 
+
+
+####### START #######
+
+rootcheck
 main
