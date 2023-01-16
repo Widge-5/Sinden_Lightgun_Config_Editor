@@ -16,7 +16,7 @@
 ############  GLOBAL ######
 ###########################
 
-backtitle="Config Editor for Sinden Lightgun v0.03 -- By Widge"
+backtitle="Config Editor for Sinden Lightgun v1.00 -- By Widge"
 
 cfg_P1_norm="/home/pi/Lightgun/Player1/LightgunMono.exe.config"                ;  name_P1_norm="Player 1 - No Recoil"
 cfg_P1_reco="/home/pi/Lightgun/Player1recoil/LightgunMono.exe.config"          ;  name_P1_reco="Player 1 - Single Recoil"
