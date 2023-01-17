@@ -1,4 +1,4 @@
 #!/bin/bash
 
-sudo /home/pi/Lightgun/configedit/sindenconfigedit.sh
+sudo /home/pi/Lightgun/utils/sindenconfigedit.sh
 

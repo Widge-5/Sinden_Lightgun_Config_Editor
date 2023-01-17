@@ -3,7 +3,7 @@
 ######################################################################
 ##
 ##   Config Editor for Sinden Lightgun
-##   v1.01    January 2023
+##   v1.05    January 2023
 ##   -- By Widge
 ##
 ##   For use with Sinden v1.8 config files
@@ -46,6 +46,8 @@ function prep() {
 
 function post() {
   /opt/retropie/admin/joy2key/joy2key stop
+  dialog --infobox "\nRestart your guns for any changes to take effect." 5 55 3>&1 1>&2 2>&3
+  sleep 3
   clear
 }
 
@@ -90,29 +92,142 @@ function rangeentry(){
 }
 
 
+
+function captivedialog { # usage: captivedialog [duration(s)] [height] [width] [message] [title]
+  local count=$1+1
+  local percent
+  local yn
+  (( ++count )) 
+  ( while :; do
+      cat <<-EOF      # The "-" here allows EOF later to be indented with TAB
+        $percent
+	EOF
+      (( count-=1 ))  # This can only be indented with TAB
+      percent=$((100/$1*($1+2-$count)))
+      [ $count -eq 0 ] && break
+      sleep 0.1
+    done ) |
+    dialog --title "$5" --gauge "$4" $2 $3 $percent
+    dialog --title "$5" --yes-label " OK " --no-label " Go Back " --yesno "$4" $2 $3
+    captivereturn=$?
+}
+
+
+
+
+function settingstransfer() {
+  local title
+  local selection
+  local yn
+  local destname
+  local destfile
+  title="Destination for $1 Settings Transfer"
+  selection=$(dialog --title "$title" --backtitle "$backtitle" --menu \
+      "\nChoose Which config file you would like to copy these settings into.\n\nBe careful to make the correct selection and ensure that you have made backups of your configs." \
+      25 70 18 \
+      "1"   "$name_P1_norm" \
+      "2"   "$name_P1_reco" \
+      "3"   "$name_P1_auto" \
+      "4"   "$name_P2_norm" \
+      "5"   "$name_P2_reco" \
+      "6"   "$name_P2_auto" \
+      "7"   "$name_P3_norm" \
+      "8"   "$name_P3_reco" \
+      "9"   "$name_P3_auto" \
+      "10"  "$name_P4_norm" \
+      "11"  "$name_P4_reco" \
+      "12"  "$name_P4_auto" \
+      "13"  "$name_S1_norm" \
+      "14"  "$name_S1_reco" \
+      "15"  "$name_S1_auto" \
+      "16"  "$name_S2_norm" \
+      "17"  "$name_S2_reco" \
+      "18"  "$name_S2_auto" \
+      3>&1 1>&2 2>&3 )
+      case "$selection" in
+          1)   destfile=$cfg_P1_norm ;  destname=$name_P1_norm ;;
+          2)   destfile=$cfg_P1_reco ;  destname=$name_P1_reco ;;
+          3)   destfile=$cfg_P1_auto ;  destname=$name_P1_auto ;;
+          4)   destfile=$cfg_P2_norm ;  destname=$name_P2_norm ;;
+          5)   destfile=$cfg_P2_reco ;  destname=$name_P2_reco ;;
+          6)   destfile=$cfg_P2_auto ;  destname=$name_P2_auto ;;
+          7)   destfile=$cfg_P3_norm ;  destname=$name_P3_norm ;;
+          8)   destfile=$cfg_P3_reco ;  destname=$name_P3_reco ;;
+          9)   destfile=$cfg_P3_auto ;  destname=$name_P3_auto ;;
+          10)  destfile=$cfg_P4_norm ;  destname=$name_P4_norm ;;
+          11)  destfile=$cfg_P4_reco ;  destname=$name_P4_reco ;;
+          12)  destfile=$cfg_P4_auto ;  destname=$name_P4_auto ;;
+          13)  destfile=$cfg_S1_norm ;  destname=$name_S1_norm ;;
+          14)  destfile=$cfg_S1_reco ;  destname=$name_S1_reco ;;
+          15)  destfile=$cfg_S1_auto ;  destname=$name_S1_auto ;;
+          16)  destfile=$cfg_S2_norm ;  destname=$name_S2_norm ;;
+          17)  destfile=$cfg_S2_reco ;  destname=$name_S2_reco ;;
+          18)  destfile=$cfg_S2_auto ;  destname=$name_S2_auto ;;
+          *)   return ;;	  
+        esac
+     if ! [ "$destname" = "" ]; then
+       if [ $(filecheck $destfile) == "yes" ]; then
+         dialog --title "Your Selection..." --msgbox "\nCopy $1 Settings from: \n$sourcename\n$sourcefile\n\nInto:\n$destname\n$destfile"  15 70
+         settingstransfer_2 "$1" "$sourcefile" "$destfile"
+       fi
+     else
+       dialog --title "Your Selection..." --msgbox "\nVoid config selected. Cancelling" 10 70
+       return
+     fi
+}
+
+function settingstransfer_2() { 
+local yn
+yn=$(areyousure "go through with this transfer?")
+  if [ $yn == "0" ]; then
+    case "$1" in
+      "Button Map") 
+         buttonprep
+         savebuttons $3
+         dialog --title "$1" --backtitle "$backtitle" --no-cancel --msgbox "\nTransfer Complete"  7 22
+         ;;
+      "Recoil")
+         recoilprep
+         saverecoil $3
+         dialog --title "$1" --backtitle "$backtitle" --no-cancel --msgbox "\nTransfer Complete"  7 22
+         ;;
+      "Camera")
+         cameraprep
+         savecamera $3
+         dialog --title "$1" --backtitle "$backtitle" --no-cancel --msgbox "\nTransfer Complete"  7 22
+         ;;
+      *) dialog --msgbox "ERROR"  15 70 ;;
+    esac
+  else
+    dialog --msgbox "\nTransfer Cancelled"  7 23
+  fi  
+}
+
+
+
 ###########################
 ############  RECOIL ######
 ###########################
 
 function saverecoil() {
-  applychange $sourcefile $s_agreeterms     $v_agreeterms    
-  applychange $sourcefile $s_enablerecoil   $v_enablerecoil
+  applychange $1 $s_agreeterms     $v_agreeterms    
+  applychange $1 $s_enablerecoil   $v_enablerecoil
 
-  applychange $sourcefile $s_rectrigger     $v_rectrigger
-  applychange $sourcefile $s_rectriggeros   $v_rectriggeros
-  applychange $sourcefile $s_recpumpon      $v_recpumpon   
-  applychange $sourcefile $s_recpumpoff     $v_recpumpoff  
+  applychange $1 $s_rectrigger     $v_rectrigger
+  applychange $1 $s_rectriggeros   $v_rectriggeros
+  applychange $1 $s_recpumpon      $v_recpumpon   
+  applychange $1 $s_recpumpoff     $v_recpumpoff  
 
-  applychange $sourcefile $s_recfl          $v_recfl
-  applychange $sourcefile $s_recfr          $v_recfr
-  applychange $sourcefile $s_recbl          $v_recbl
-  applychange $sourcefile $s_recbr          $v_recbr
+  applychange $1 $s_recfl          $v_recfl
+  applychange $1 $s_recfr          $v_recfr
+  applychange $1 $s_recbl          $v_recbl
+  applychange $1 $s_recbr          $v_recbr
 
-  applychange $sourcefile $s_singlestrength $v_singlestrength
-  applychange $sourcefile $s_recoiltype     $v_recoiltype
-  applychange $sourcefile $s_autostrength   $v_autostrength
-  applychange $sourcefile $s_autodelay      $v_autodelay
-  applychange $sourcefile $s_autopulse      $v_autopulse
+  applychange $1 $s_singlestrength $v_singlestrength
+  applychange $1 $s_recoiltype     $v_recoiltype
+  applychange $1 $s_autostrength   $v_autostrength
+  applychange $1 $s_autodelay      $v_autodelay
+  applychange $1 $s_autopulse      $v_autopulse
 }
 
 
@@ -146,10 +261,10 @@ function recoilprep() {
 function termsandcond(){ 
   local licensetxt
   local title
-  licensetxt="/home/pi/Lightgun/configedit/tsandcs.txt"
+  licensetxt="/home/pi/Lightgun/utils/recoiltcs.txt"
   title="Recoil Terms and Conditions"
   dialog --defaultno --scrollbar --yes-label " Accept " --no-label " Cancel " \
-    --title "$title" --backtitle "$backtitle" --yesno "$(head -c 3K $licensetxt)"  30 70 3>&1 1>&2 2>&3
+    --title "$title" --backtitle "$backtitle" --yesno "$(head -c 3K $licensetxt)"  35 70 3>&1 1>&2 2>&3
   local RET=$?
   if [ $RET -eq 0 ]; then
     v_agreeterms=1
@@ -273,22 +388,24 @@ function recoilmenu(){
       "1"  "Enable/disable recoil ($(onoffread $v_enablerecoil))" \
       "2"  "Enable/disable which buttons should use recoil." \
       "3"  "Recoil type and intensity." \
-      "4"  "Save changes and exit." \
-      "5"  "Withdraw agreement to the terms of use." \
+      "4"  "Transfer this file's settings to another config file" \
+      "5"  "Save changes and exit." \
+      "6"  "Withdraw agreement to the terms of use." \
       3>&1 1>&2 2>&3 )
         case "$selection" in
           1) v_enablerecoil=$(onoffwrite $v_enablerecoil) ;;
           2) recoilmenuitem=4 ;;
           3) recoilmenuitem=5 ;;
-          4) yn=$(areyousure "overwrite your $sourcename config file with the selections you have made?")
+          4) settingstransfer "Recoil" ;;
+          5) yn=$(areyousure "overwrite your $sourcename config file with the selections you have made?")
              if [ $yn == "0" ]; then
-               saverecoil
+               saverecoil $sourcefile
                dialog --backtitle "$backtitle" --title "Save Complete" --msgbox "\nRecoil changes have been saved for $sourcename." 12 78
                recoilmenuitem=9
              else
                recoilmenuitem=3
              fi ;;
-          5) yn=$(areyousure "withdraw your agreement to the terms of the licence? This will disable recoil functionality.")
+          6) yn=$(areyousure "withdraw your agreement to the terms of the licence? This will disable recoil functionality.")
              if [ $yn == "0" ]; then
                applychange $s_agreeterms   0 $sourcefile
                recoilprep
@@ -303,7 +420,7 @@ function recoilmenu(){
 
 
 
-function recoilchoosecfgfile(){
+function recoilchoosecfgfile() {
   local title
   local selection
   title="Recoil Config File Selection ($1)"
@@ -421,14 +538,14 @@ function cameraprep() {
 
 
 function savecamera() {
-  applychange $sourcefile $s_brightness     $v_brightness
-  applychange $sourcefile $s_contrast       $v_contrast  
-  applychange $sourcefile $s_expauto        $v_expauto   
-  applychange $sourcefile $s_saturation     $v_saturation
-  applychange $sourcefile $s_colourrange    $v_colourrange
-  applychange $sourcefile $s_whiteauto      $v_whiteauto  
-  applychange $sourcefile $s_whitebalance   $v_whitebalance
-  applychange $sourcefile $s_exposure       $v_exposure  
+  applychange $1 $s_brightness     $v_brightness
+  applychange $1 $s_contrast       $v_contrast  
+  applychange $1 $s_expauto        $v_expauto   
+  applychange $1 $s_saturation     $v_saturation
+  applychange $1 $s_colourrange    $v_colourrange
+  applychange $1 $s_whiteauto      $v_whiteauto  
+  applychange $1 $s_whitebalance   $v_whitebalance
+  applychange $1 $s_exposure       $v_exposure  
 }
 
 
@@ -440,7 +557,7 @@ function cameramenu() {
   if [ $v_expauto = "1" ]; then v_exposure=""; fi
   selection=$(dialog --cancel-label " Quit without saving " --title "$title" --backtitle "$backtitle" --menu \
     "\nChoose which setting you want to edit.\nThe current value is shown alongside the option." \
-    20 70 9 \
+    20 70 10 \
       "1"  "Brightness ($v_brightness)" \
       "2"  "Contrast ($v_contrast)" \
       "3"  "Auto Exposure ($(onoffread $v_expauto))" \
@@ -449,7 +566,8 @@ function cameramenu() {
       "6"  "Colour Match Range ($v_colourrange)" \
       "7"  "Auto White Balance ($(onoffread $v_whiteauto))" \
       "8"  "Manual White Balance ($v_whitebalance)" \
-      "9"  "Save changes" \
+      "9"  "Transfer this file's settings to another config file" \
+      "10" "Save changes" \
       3>&1 1>&2 2>&3 )
     case "$selection" in
       1) v_brightness=$(rangeentry "Camera Brightness" 0 255 $v_brightness) ;;
@@ -463,9 +581,10 @@ function cameramenu() {
       6) v_colourrange=$(rangeentry "Camera Colour Match Range" 0 512 $v_colourrange "Slight increases to this value can sometimes help with border recognition.\n\n") ;;
       7) v_whiteauto=$(onoffwrite $v_whiteauto) ;;
       8) v_whitebalance=$(rangeentry "Camera Manual White Balance" 2800 6500 $v_whitebalance) ;;
-      9) yn=$(areyousure "overwrite your $sourcename config file with the selections you have made?")
+      9) settingstransfer "Camera" ;;
+      10) yn=$(areyousure "overwrite your $sourcename config file with the selections you have made?")
              if [ $yn == "0" ]; then
-               savecamera
+               savecamera $sourcefile
                dialog --backtitle "$backtitle" --title "Save Complete" --msgbox "\nCamera changes have been saved for $sourcename." 12 78
                cameramenuitem=9
              fi ;;
@@ -598,6 +717,7 @@ function cameramain(){
 
 
 
+
 function buttonprep() {
   s_ontrigger="\"ButtonTrigger\""           ;   v_ontrigger=$(getvalues $s_ontrigger)
   s_onpump="\"ButtonPumpAction\""           ;   v_onpump=$(getvalues $s_onpump)
@@ -647,47 +767,47 @@ function buttonprep() {
 }
 
 
-function savebuttons() {
-  applychange $sourcefile $s_ontrigger $v_ontrigger
-  applychange $sourcefile $s_onpump $v_onpump
-  applychange $sourcefile $s_onfl $v_onfl
-  applychange $sourcefile $s_onbl $v_onbl
-  applychange $sourcefile $s_onfr $v_onfr
-  applychange $sourcefile $s_onbr $v_onbr
-  applychange $sourcefile $s_onup $v_onup
-  applychange $sourcefile $s_ondown $v_ondown
-  applychange $sourcefile $s_onleft $v_onleft
-  applychange $sourcefile $s_onright $v_onright
-  applychange $sourcefile $s_onmodtrigger $v_onmodtrigger
-  applychange $sourcefile $s_onmodpump $v_onmodpump
-  applychange $sourcefile $s_onmodfl $v_onmodfl
-  applychange $sourcefile $s_onmodbl $v_onmodbl
-  applychange $sourcefile $s_onmodfr $v_onmodfr
-  applychange $sourcefile $s_onmodbr $v_onmodbr
-  applychange $sourcefile $s_onmodup $v_onmodup
-  applychange $sourcefile $s_onmoddown $v_onmoddown
-  applychange $sourcefile $s_onmodleft $v_onmodleft
-  applychange $sourcefile $s_onmodright $v_onmodright
-  applychange $sourcefile $s_offtrigger $v_offtrigger
-  applychange $sourcefile $s_offpump $v_offpump
-  applychange $sourcefile $s_offfl $v_offfl
-  applychange $sourcefile $s_offbl $v_offbl
-  applychange $sourcefile $s_offfr $v_offfr
-  applychange $sourcefile $s_offbr $v_offbr
-  applychange $sourcefile $s_offup $v_offup
-  applychange $sourcefile $s_offdown $v_offdown
-  applychange $sourcefile $s_offleft $v_offleft
-  applychange $sourcefile $s_offright $v_offright
-  applychange $sourcefile $s_offmodtrigger $v_offmodtrigger
-  applychange $sourcefile $s_offmodpump $v_offmodpump
-  applychange $sourcefile $s_offmodfl $v_offmodfl
-  applychange $sourcefile $s_offmodbl $v_offmodbl
-  applychange $sourcefile $s_offmodfr $v_offmodfr
-  applychange $sourcefile $s_offmodbr $v_offmodbr
-  applychange $sourcefile $s_offmodup $v_offmodup
-  applychange $sourcefile $s_offmoddown $v_offmoddown
-  applychange $sourcefile $s_offmodleft $v_offmodleft
-  applychange $sourcefile $s_offmodright $v_offmodright
+function savebuttons() { 
+  applychange $1 $s_ontrigger $v_ontrigger
+  applychange $1 $s_onpump $v_onpump
+  applychange $1 $s_onfl $v_onfl
+  applychange $1 $s_onbl $v_onbl
+  applychange $1 $s_onfr $v_onfr
+  applychange $1 $s_onbr $v_onbr
+  applychange $1 $s_onup $v_onup
+  applychange $1 $s_ondown $v_ondown
+  applychange $1 $s_onleft $v_onleft
+  applychange $1 $s_onright $v_onright
+  applychange $1 $s_onmodtrigger $v_onmodtrigger
+  applychange $1 $s_onmodpump $v_onmodpump
+  applychange $1 $s_onmodfl $v_onmodfl
+  applychange $1 $s_onmodbl $v_onmodbl
+  applychange $1 $s_onmodfr $v_onmodfr
+  applychange $1 $s_onmodbr $v_onmodbr
+  applychange $1 $s_onmodup $v_onmodup
+  applychange $1 $s_onmoddown $v_onmoddown
+  applychange $1 $s_onmodleft $v_onmodleft
+  applychange $1 $s_onmodright $v_onmodright
+  applychange $1 $s_offtrigger $v_offtrigger
+  applychange $1 $s_offpump $v_offpump
+  applychange $1 $s_offfl $v_offfl
+  applychange $1 $s_offbl $v_offbl
+  applychange $1 $s_offfr $v_offfr
+  applychange $1 $s_offbr $v_offbr
+  applychange $1 $s_offup $v_offup
+  applychange $1 $s_offdown $v_offdown
+  applychange $1 $s_offleft $v_offleft
+  applychange $1 $s_offright $v_offright
+  applychange $1 $s_offmodtrigger $v_offmodtrigger
+  applychange $1 $s_offmodpump $v_offmodpump
+  applychange $1 $s_offmodfl $v_offmodfl
+  applychange $1 $s_offmodbl $v_offmodbl
+  applychange $1 $s_offmodfr $v_offmodfr
+  applychange $1 $s_offmodbr $v_offmodbr
+  applychange $1 $s_offmodup $v_offmodup
+  applychange $1 $s_offmoddown $v_offmoddown
+  applychange $1 $s_offmodleft $v_offmodleft
+  applychange $1 $s_offmodright $v_offmodright
 }
 
 
@@ -858,25 +978,26 @@ function buttononoffmenu(){
   title="Button Mapping On/Off-Screen Group Selection"
   selection=$(dialog --cancel-label " Quit without saving " --title "$title" --backtitle "$backtitle" --menu \
       "\nWhich button settings group would you like to view and edit?" \
-      20 70 4 \
+      20 70 5 \
       "1"  "Normal button actions" \
       "2"  "Enable/Disable off-screen actions ($(onoffread $v_enableoffscreen))" \
       "3"  "Off-screen button actions" \
-      "4"  "Save changes and exit" \
+      "4"  "Transfer this file's settings to another config file" \
+      "5"  "Save changes and exit" \
       3>&1 1>&2 2>&3 )
         case "$selection" in
           1) buttonsonscreen ;;
           2) v_enableoffscreen=$(onoffwrite $v_enableoffscreen) ;;
           3) buttonsoffscreen ;;
-          4) yn=$(areyousure "overwrite your $sourcename config file with the selections you have made?")
+          4) settingstransfer "Button Map" ;;
+          5) yn=$(areyousure "overwrite your $sourcename config file with the selections you have made?")
              if [ $yn == "0" ]; then
-               savebuttons
+               savebuttons $sourcefile
                dialog --backtitle "$backtitle" --title "Save Complete" --msgbox "\nButton mapping changes have been saved for $sourcename." 12 78
                buttonmenuitem=9
              else
                buttonmenuitem=2
              fi ;;
-          4)  ;;
           *) buttonmenuitem=9; return ;;
         esac
 }
@@ -979,17 +1100,25 @@ function buttonchoosegroup(){
 
 
 function buttonmain(){
-  buttonmenuitem=0
+  buttonmenuitem=8
   while ! [[ $buttonmenuitem -eq 9 ]]; do
     case "$buttonmenuitem" in
       0) buttonchoosegroup ;;
       1) buttonprep
          buttonmenuitem=2 ;;
       2) buttononoffmenu;;
+      8) captivedialog 50 15 50  "\nEditing the button mapping may lead to loss of functions in games if they have been pre-configured with the existing settings in mind.\n\nProceed only if you have made backups of your configs and you know what you are doing," "CAUTION!"
+         case "$captivereturn" in
+           0) ;;
+           1|*) return ;;
+         esac
+         buttonmenuitem=0 ;;
      9|*) return ;;
     esac
   done
 }
+
+
 
 
 
@@ -1009,7 +1138,7 @@ function restorebackup() {
   title="Restore a Backup"
   selection=$(dialog --title "$title" --backtitle "$backtitle" --menu \
       "\n$sourcename\n\nWhich $1 config file would you like to restore from backup?" \
-      20 70 18 \
+      30 70 18 \
       "1"  "$name_P1_norm" \
       "2"  "$name_P1_reco" \
       "3"  "$name_P1_auto" \
@@ -1180,7 +1309,7 @@ function frontmenu(){
   local selection
   while :; do
     title="Front Menu"
-    selection=$(dialog --title "$title" --backtitle "$backtitle" --menu \
+    selection=$(dialog --cancel-label " Exit " --title "$title" --backtitle "$backtitle" --menu \
         "\nWhat config elements would you like to view and edit?" \
         20 70 4 \
         "1"  "Recoil" \
