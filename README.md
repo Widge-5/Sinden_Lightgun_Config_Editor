@@ -22,13 +22,9 @@ The script will then download the files needed and install them in their appropr
 The install script will offer to delete itself then you will be prompted to restart EmulationStation
 
 ## What to expect
-In the Sinden (or Ports) group, you will find a new script available called Sinden Lightgun Config Editor.  Executing this script will launch a menu system that will enable you to edit recoil settings, camera settings and button mapping for each of your Sinden Lightgun configs using a keyboard or a control pad.  The menu also offers a facility to make backups of your configs and to restore those backups.
+In the Sinden (or Ports) group, you will find a new script available called Sinden Lightgun Config Editor.  Executing this script will launch a menu system that will enable you to edit recoil settings, camera settings and button mapping for each of your Sinden Lightgun configs using a keyboard or a control pad.  The menu also offers a facility to make backups of your configs, to restore those backups and even to transfer settings between config files.
 
 The utility is pre-configured with the addresses of the Lightgun config files as they are in barebones.  If your config files are in another location then you should edit the variables at the top of the script to reflect this.
 
 The script can be found at `/home/pi/Lightgun/utils/sindenconfigedit.sh`.
 
-## Work in Progress
-This tool is still a work-in-progress.  Everything contained within at this time is fully functional but there are future plans to include:
-- Transfering of recoil/camera/button settings between configs.
-- (need to) add a reminder message to restart the guns for changes to take effect.
