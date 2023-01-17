@@ -111,7 +111,7 @@ echo $thisfile
   chmod +x *.sh
   mkdir "$destfolder"
   cp -pf "$tmpfolder/Sinden_Lightgun_Config_Editor-main/sindenconfigedit.sh" $destfolder
-  cp -pf "$tmpfolder/Sinden_Lightgun_Config_Editor-main/tsandcs.txt" $destfolder
+  cp -pf "$tmpfolder/Sinden_Lightgun_Config_Editor-main/recoiltcs.txt" $destfolder
   cp -pf "$tmpfolder/Sinden_Lightgun_Config_Editor-main/Sinden Lightgun Config Editor.sh" $sindenfolder
   tidyup "$tmpfolder"
   colourecho cLCYAN  "Install completed"
