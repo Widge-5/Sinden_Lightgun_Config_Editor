@@ -26,7 +26,7 @@ In the Sinden (or Ports) group, you will find a new script available called Sind
 
 The utility is pre-configured with the addresses of the Lightgun config files as they are in barebones.  If your config files are in another location then you should edit the variables at the top of the script to reflect this.
 
-The script can be found at `/home/pi/Lightgun/configedit/sindenconfigedit.sh`.
+The script can be found at `/home/pi/Lightgun/utils/sindenconfigedit.sh`.
 
 ## Work in Progress
 This tool is still a work-in-progress.  Everything contained within at this time is fully functional but there are future plans to include:
