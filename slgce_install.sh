@@ -11,7 +11,7 @@ thisfile=$(echo "$PWD/"`basename "$0"`)
 
 repo="https://github.com/Widge-5/Sinden_Lightgun_Config_Editor/archive/refs/heads/main.zip"
 tmpfolder="/home/pi/slgce_install"
-destfolder="/home/pi/Lightgun/configedit"
+destfolder="/home/pi/Lightgun/utils"
 sindenfolder="/home/pi/RetroPie/roms"
 title="BareBones Screen Aspect Adaptation Utility"
 
