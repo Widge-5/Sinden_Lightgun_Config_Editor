@@ -3,7 +3,7 @@
 ######################################################################
 ##
 ##   Config Editor for Sinden Lightgun
-##   v1.05    January 2023
+##   v1.06    January 2023
 ##   -- By Widge
 ##
 ##   For use with Sinden v1.8 config files
@@ -16,7 +16,7 @@
 ############  GLOBAL ######
 ###########################
 
-backtitle="Config Editor for Sinden Lightgun v0.03 -- By Widge"
+backtitle="Config Editor for Sinden Lightgun v1.06 -- By Widge"
 
 cfg_P1_norm="/home/pi/Lightgun/Player1/LightgunMono.exe.config"                ;  name_P1_norm="Player 1 - No Recoil"
 cfg_P1_reco="/home/pi/Lightgun/Player1recoil/LightgunMono.exe.config"          ;  name_P1_reco="Player 1 - Single Recoil"
@@ -29,7 +29,7 @@ cfg_P3_reco="/home/pi/Lightgun/Player3recoil/LightgunMono3.exe.config"         ;
 cfg_P3_auto="/home/pi/Lightgun/Player3recoilauto/LightgunMono3.exe.config"     ;  name_P3_auto="Player 3 - Auto Recoil"
 cfg_P4_norm="/home/pi/Lightgun/Player4recoil/LightgunMono4.exe.config"         ;  name_P4_norm="Player 4 - No Recoil"
 cfg_P4_reco="/home/pi/Lightgun/Player4recoil/LightgunMono4.exe.config"         ;  name_P4_reco="Player 4 - Single Recoil"
-cfg_P4_auto="/home/pi/Lightgun/Player4recoilauto/LightgunMono4.exe.config"     ;  name_P4_auto="Player 4 - No Recoil"
+cfg_P4_auto="/home/pi/Lightgun/Player4recoilauto/LightgunMono4.exe.config"     ;  name_P4_auto="Player 4 - Auto Recoil"
 cfg_S1_norm="/home/pi/Lightgun/SM3_Player1/LightgunMono.exe.config"            ;  name_S1_norm="Player 1 Supermodel - No Recoil"
 cfg_S1_reco="/home/pi/Lightgun/SM3_Player1recoil/LightgunMono.exe.config"      ;  name_S1_reco="Player 1 Supermodel - Single Recoil"
 cfg_S1_auto="/home/pi/Lightgun/SM3_Player1recoilauto/LightgunMono.exe.config"  ;  name_S1_auto="Player 1 Supermodel - Auto Recoil"
@@ -113,18 +113,13 @@ function captivedialog { # usage: captivedialog [duration(s)] [height] [width] [
 }
 
 
-
-
-function settingstransfer() {
-  local title
+function choosefile() { # [title] [message]
   local selection
+  local choicecfg
+  local choicename
   local yn
-  local destname
   local destfile
-  title="Destination for $1 Settings Transfer"
-  selection=$(dialog --title "$title" --backtitle "$backtitle" --menu \
-      "\nChoose Which config file you would like to copy these settings into.\n\nBe careful to make the correct selection and ensure that you have made backups of your configs." \
-      25 70 18 \
+  selection=$(dialog --title "$1" --backtitle "$backtitle" --menu "$2" 25 70 18 \
       "1"   "$name_P1_norm" \
       "2"   "$name_P1_reco" \
       "3"   "$name_P1_auto" \
@@ -145,36 +140,58 @@ function settingstransfer() {
       "18"  "$name_S2_auto" \
       3>&1 1>&2 2>&3 )
       case "$selection" in
-          1)   destfile=$cfg_P1_norm ;  destname=$name_P1_norm ;;
-          2)   destfile=$cfg_P1_reco ;  destname=$name_P1_reco ;;
-          3)   destfile=$cfg_P1_auto ;  destname=$name_P1_auto ;;
-          4)   destfile=$cfg_P2_norm ;  destname=$name_P2_norm ;;
-          5)   destfile=$cfg_P2_reco ;  destname=$name_P2_reco ;;
-          6)   destfile=$cfg_P2_auto ;  destname=$name_P2_auto ;;
-          7)   destfile=$cfg_P3_norm ;  destname=$name_P3_norm ;;
-          8)   destfile=$cfg_P3_reco ;  destname=$name_P3_reco ;;
-          9)   destfile=$cfg_P3_auto ;  destname=$name_P3_auto ;;
-          10)  destfile=$cfg_P4_norm ;  destname=$name_P4_norm ;;
-          11)  destfile=$cfg_P4_reco ;  destname=$name_P4_reco ;;
-          12)  destfile=$cfg_P4_auto ;  destname=$name_P4_auto ;;
-          13)  destfile=$cfg_S1_norm ;  destname=$name_S1_norm ;;
-          14)  destfile=$cfg_S1_reco ;  destname=$name_S1_reco ;;
-          15)  destfile=$cfg_S1_auto ;  destname=$name_S1_auto ;;
-          16)  destfile=$cfg_S2_norm ;  destname=$name_S2_norm ;;
-          17)  destfile=$cfg_S2_reco ;  destname=$name_S2_reco ;;
-          18)  destfile=$cfg_S2_auto ;  destname=$name_S2_auto ;;
-          *)   return ;;	  
+          1)   choicecfg=$cfg_P1_norm ;  choicename=$name_P1_norm ;;
+          2)   choicecfg=$cfg_P1_reco ;  choicename=$name_P1_reco ;;
+          3)   choicecfg=$cfg_P1_auto ;  choicename=$name_P1_auto ;;
+          4)   choicecfg=$cfg_P2_norm ;  choicename=$name_P2_norm ;;
+          5)   choicecfg=$cfg_P2_reco ;  choicename=$name_P2_reco ;;
+          6)   choicecfg=$cfg_P2_auto ;  choicename=$name_P2_auto ;;
+          7)   choicecfg=$cfg_P3_norm ;  choicename=$name_P3_norm ;;
+          8)   choicecfg=$cfg_P3_reco ;  choicename=$name_P3_reco ;;
+          9)   choicecfg=$cfg_P3_auto ;  choicename=$name_P3_auto ;;
+          10)  choicecfg=$cfg_P4_norm ;  choicename=$name_P4_norm ;;
+          11)  choicecfg=$cfg_P4_reco ;  choicename=$name_P4_reco ;;
+          12)  choicecfg=$cfg_P4_auto ;  choicename=$name_P4_auto ;;
+          13)  choicecfg=$cfg_S1_norm ;  choicename=$name_S1_norm ;;
+          14)  choicecfg=$cfg_S1_reco ;  choicename=$name_S1_reco ;;
+          15)  choicecfg=$cfg_S1_auto ;  choicename=$name_S1_auto ;;
+          16)  choicecfg=$cfg_S2_norm ;  choicename=$name_S2_norm ;;
+          17)  choicecfg=$cfg_S2_reco ;  choicename=$name_S2_reco ;;
+          18)  choicecfg=$cfg_S2_auto ;  choicename=$name_S2_auto ;;
+          *)   return ;;
         esac
-     if ! [ "$destname" = "" ]; then
-       if [ $(filecheck $destfile) == "yes" ]; then
-         dialog --title "Your Selection..." --msgbox "\nCopy $1 Settings from: \n$sourcename\n$sourcefile\n\nInto:\n$destname\n$destfile"  15 70
-         settingstransfer_2 "$1" "$sourcefile" "$destfile"
-       fi
+     if ! [ "$choicename" = "" ]; then
+       dialog --title "Your Selection..." --msgbox "\n$choicename\n$choicecfg" 10 70
+       selfile="$choicecfg"
+       selname="$choicename"
      else
        dialog --title "Your Selection..." --msgbox "\nVoid config selected. Cancelling" 10 70
+       selfile=""
+       selname=""
        return
      fi
 }
+
+
+
+function settingstransfer() {
+  local title
+  local selection
+  local yn
+  local destname
+  local destfile
+  title="Destination for $1 Settings Transfer"
+  choosefile "$title" "\nChoose Which config file you would like to copy these settings into.\n\nBe careful to make the correct selection and ensure that you have made backups of your configs."
+  destfile=$selfile
+  destname=$selname
+     if ! [ "$destname" = "" ]; then
+         settingstransfer_2 "$1" "$sourcefile" "$destfile"
+     else
+       return
+     fi
+}
+
+
 
 function settingstransfer_2() { 
 local yn
@@ -420,93 +437,27 @@ function recoilmenu(){
 
 
 
-function recoilchoosecfgfile() {
+function recoilchoosefile() {
   local title
   local selection
-  title="Recoil Config File Selection ($1)"
-  case "$1" in
-    "No-Recoil")
-      f_cfg1=$cfg_P1_norm ; n_cfg1=$name_P1_norm
-      f_cfg2=$cfg_P2_norm ; n_cfg2=$name_P2_norm
-      f_cfg3=$cfg_P3_norm ; n_cfg3=$name_P3_norm
-      f_cfg4=$cfg_P4_norm ; n_cfg4=$name_P4_norm
-      f_cfg5=$cfg_S1_norm ; n_cfg5=$name_S1_norm
-      f_cfg6=$cfg_S2_norm ; n_cfg6=$name_S2_norm
-    ;;
-    "Single-Recoil")
-      f_cfg1=$cfg_P1_reco ; n_cfg1=$name_P1_reco
-      f_cfg2=$cfg_P2_reco ; n_cfg2=$name_P2_reco
-      f_cfg3=$cfg_P3_reco ; n_cfg3=$name_P3_reco
-      f_cfg4=$cfg_P4_reco ; n_cfg4=$name_P4_reco
-      f_cfg5=$cfg_S1_reco ; n_cfg5=$name_S1_reco
-      f_cfg6=$cfg_S2_reco ; n_cfg6=$name_S2_reco
-    ;;
-    "Auto-Recoil")
-      f_cfg1=$cfg_P1_auto; n_cfg1=$name_P1_auto
-      f_cfg2=$cfg_P2_auto; n_cfg2=$name_P2_auto
-      f_cfg3=$cfg_P3_auto; n_cfg3=$name_P3_auto
-      f_cfg4=$cfg_P4_auto; n_cfg4=$name_P4_auto
-      f_cfg5=$cfg_S1_auto; n_cfg5=$name_S1_auto
-      f_cfg6=$cfg_S2_auto; n_cfg6=$name_S2_auto
-    ;;
-  esac
-  selection=$(dialog --title "$title" --backtitle "$backtitle" --menu \
-      "\n$sourcename\n\nWhich $1 config file would you like to view and edit?" \
-      20 70 6 \
-      "1"  "$n_cfg1" \
-      "2"  "$n_cfg2" \
-      "3"  "$n_cfg3" \
-      "4"  "$n_cfg4" \
-      "5"  "$n_cfg5" \
-      "6"  "$n_cfg6" \
-      3>&1 1>&2 2>&3 )
-        case "$selection" in
-          1) sourcefile=$f_cfg1 ;  sourcename=$n_cfg1 ;;
-          2) sourcefile=$f_cfg2 ;  sourcename=$n_cfg2 ;;
-          3) sourcefile=$f_cfg3 ;  sourcename=$n_cfg3 ;;
-          4) sourcefile=$f_cfg4 ;  sourcename=$n_cfg4 ;;
-          5) sourcefile=$f_cfg5 ;  sourcename=$n_cfg5 ;;
-          6) sourcefile=$f_cfg6 ;  sourcename=$n_cfg6 ;;
-          *) return ;;	  
-        esac
-     if ! [ "$sourcename" = "" ]; then
-       if [ $(filecheck $sourcefile) == "yes" ]; then
-         dialog --title "Your Selection..." --msgbox "\n$sourcename\n$sourcefile" 10 70
+  title="Recoil Config File Selection"
+  choosefile "$title" "\nWhich config file would you like to view and edit?"
+  sourcefile=$selfile
+  sourcename=$selname
+     if ! [ "$sourcename" = "" ] && [ $(filecheck $sourcefile) == "yes" ]; then
          recoilmenuitem=1
-       fi
      else
-       dialog --title "Your Selection..." --msgbox "\nVoid config selected. Cancelling" 10 70
-       return
+         recoilmenuitem=9
      fi
 }
 
-function recoilchoosecfggroup(){
-  local title
-  local selection
-  title="Recoil Config Group Selection"
-  sourcename=""
-  sourcefile=""
-  selection=$(dialog --title "$title" --backtitle "$backtitle" --menu \
-      "\nWhich config group would you like to view and edit?" \
-      20 70 3 \
-      "1"  "No Recoil" \
-      "2"  "Single Recoil" \
-      "3"  "Auto Recoil" \
-      3>&1 1>&2 2>&3 )
-        case "$selection" in
-          1) recoilchoosecfgfile "No-Recoil" ;;
-          2) recoilchoosecfgfile "Single-Recoil" ;;
-          3) recoilchoosecfgfile "Auto-Recoil" ;;
-          *) recoilmenuitem=9; return ;;
-        esac
-}
 
 
 function recoilmain(){
   recoilmenuitem=0
   while ! [[ $recoilmenuitem -eq 9 ]]; do
     case "$recoilmenuitem" in
-      0) recoilchoosecfggroup ;;
+      0) recoilchoosefile ;;
       1) recoilprep
          recoilmenuitem=2 ;;
       2) termsandcond ;;
@@ -518,6 +469,7 @@ function recoilmain(){
     esac
   done
 }
+
 
 
 ###########################
@@ -595,103 +547,19 @@ function cameramenu() {
 
 
 
-
-function camerachoosecfgfile(){
+function camerachoosefile(){
   local title
   local selection
   title="Camera Config File Selection ($1)"
-  case "$1" in
-    "Player1")
-      f_cfg1=$cfg_P1_norm ; n_cfg1=$name_P1_norm
-      f_cfg2=$cfg_P1_reco ; n_cfg2=$name_P1_reco
-      f_cfg3=$cfg_P1_auto ; n_cfg3=$name_P1_auto
-      f_cfg4=$cfg_S1_norm ; n_cfg4=$name_S1_norm
-      f_cfg5=$cfg_S1_reco ; n_cfg5=$name_S1_reco
-      f_cfg6=$cfg_S1_auto ; n_cfg6=$name_S1_auto
-    ;;
-    "Player2")
-      f_cfg1=$cfg_P2_norm ; n_cfg1=$name_P2_norm
-      f_cfg2=$cfg_P2_reco ; n_cfg2=$name_P2_reco
-      f_cfg3=$cfg_P2_auto ; n_cfg3=$name_P2_auto
-      f_cfg4=$cfg_S2_norm ; n_cfg4=$name_S2_norm
-      f_cfg5=$cfg_S2_reco ; n_cfg5=$name_S2_reco
-      f_cfg6=$cfg_S2_auto ; n_cfg6=$name_S2_auto
-    ;;
-    "Player3")
-      f_cfg1=$cfg_P3_norm ; n_cfg1=$name_P3_norm
-      f_cfg2=$cfg_P3_reco ; n_cfg2=$name_P3_reco
-      f_cfg3=$cfg_P3_auto ; n_cfg3=$name_P3_auto
-      f_cfg4=""           ; n_cfg4=""
-      f_cfg5=""           ; n_cfg5=""
-      f_cfg6=""           ; n_cfg6=""
-    ;;
-    "Player4")
-      f_cfg1=$cfg_P4_norm ; n_cfg1=$name_P4_norm
-      f_cfg2=$cfg_P4_reco ; n_cfg2=$name_P4_reco
-      f_cfg3=$cfg_P4_auto ; n_cfg3=$name_P4_auto
-      f_cfg4=""           ; n_cfg4=""
-      f_cfg5=""           ; n_cfg5=""
-      f_cfg6=""           ; n_cfg6=""
-    ;;
-  esac
-  selection=$(dialog --title "$title" --backtitle "$backtitle" --menu \
-      "\n$sourcename\n\nWhich $1 config file would you like to view and edit?" \
-      20 70 6 \
-      "1"  "$n_cfg1" \
-      "2"  "$n_cfg2" \
-      "3"  "$n_cfg3" \
-      "4"  "$n_cfg4" \
-      "5"  "$n_cfg5" \
-      "6"  "$n_cfg6" \
-      3>&1 1>&2 2>&3 )
-        case "$selection" in
-          1) sourcefile=$f_cfg1 ;  sourcename=$n_cfg1 ;;
-          2) sourcefile=$f_cfg2 ;  sourcename=$n_cfg2 ;;
-          3) sourcefile=$f_cfg3 ;  sourcename=$n_cfg3 ;;
-          4) sourcefile=$f_cfg4 ;  sourcename=$n_cfg4 ;;
-          5) sourcefile=$f_cfg5 ;  sourcename=$n_cfg5 ;;
-          6) sourcefile=$f_cfg6 ;  sourcename=$n_cfg6 ;;
-          *) return ;;	  
-        esac
-     if ! [ "$sourcename" = "" ]; then
-       if [ $(filecheck $sourcefile) == "yes" ]; then
-         dialog --title "Your Selection..." --msgbox "\n$sourcename\n$sourcefile" 10 70
+  choosefile "$title" "\nWhich config file would you like to view and edit?"
+  sourcefile=$selfile
+  sourcename=$selname
+     if ! [ "$sourcename" = "" ] && [ $(filecheck $sourcefile) == "yes" ]; then
          cameramenuitem=1
-       fi
      else
-       dialog --title "Your Selection..." --msgbox "\nVoid config selected. Cancelling" 10 70
-       return
+         cameramenuitem=9
      fi
 }
-
-
-
-
-
-
-function camerachoosecfggroup(){
-  local title
-  local selection
-  title="Camera Config Group Selection"
-  sourcename=""
-  sourcefile=""
-  selection=$(dialog --title "$title" --backtitle "$backtitle" --menu \
-      "\nWhich config group would you like to view and edit?" \
-      20 70 4 \
-      "1"  "Player 1" \
-      "2"  "Player 2" \
-      "3"  "Player 3" \
-      "4"  "Player 4" \
-      3>&1 1>&2 2>&3 )
-        case "$selection" in
-          1) camerachoosecfgfile "Player1" ;;
-          2) camerachoosecfgfile "Player2" ;;
-          3) camerachoosecfgfile "Player3" ;;
-          4) camerachoosecfgfile "Player4" ;;
-          *) cameramenuitem=9; return ;;
-        esac
-}
-
 
 
 
@@ -699,7 +567,7 @@ function cameramain(){
   cameramenuitem=0
   while ! [[ $cameramenuitem -eq 9 ]]; do
     case "$cameramenuitem" in
-      0) camerachoosecfggroup ;;
+      0) camerachoosefile ;;
       1) cameraprep
          cameramenuitem=5 ;;
       5) cameramenu;;
@@ -1008,102 +876,23 @@ function buttonchoosefile(){
   local title
   local selection
   title="Button Config File Selection ($1)"
-  case "$1" in
-    "Player1")
-      f_cfg1=$cfg_P1_norm ; n_cfg1=$name_P1_norm
-      f_cfg2=$cfg_P1_reco ; n_cfg2=$name_P1_reco
-      f_cfg3=$cfg_P1_auto ; n_cfg3=$name_P1_auto
-      f_cfg4=$cfg_S1_norm ; n_cfg4=$name_S1_norm
-      f_cfg5=$cfg_S1_reco ; n_cfg5=$name_S1_reco
-      f_cfg6=$cfg_S1_auto ; n_cfg6=$name_S1_auto
-    ;;
-    "Player2")
-      f_cfg1=$cfg_P2_norm ; n_cfg1=$name_P2_norm
-      f_cfg2=$cfg_P2_reco ; n_cfg2=$name_P2_reco
-      f_cfg3=$cfg_P2_auto ; n_cfg3=$name_P2_auto
-      f_cfg4=$cfg_S2_norm ; n_cfg4=$name_S2_norm
-      f_cfg5=$cfg_S2_reco ; n_cfg5=$name_S2_reco
-      f_cfg6=$cfg_S2_auto ; n_cfg6=$name_S2_auto
-    ;;
-    "Player3")
-      f_cfg1=$cfg_P3_norm ; n_cfg1=$name_P3_norm
-      f_cfg2=$cfg_P3_reco ; n_cfg2=$name_P3_reco
-      f_cfg3=$cfg_P3_auto ; n_cfg3=$name_P3_auto
-      f_cfg4=""           ; n_cfg4=""
-      f_cfg5=""           ; n_cfg5=""
-      f_cfg6=""           ; n_cfg6=""
-    ;;
-    "Player4")
-      f_cfg1=$cfg_P4_norm ; n_cfg1=$name_P4_norm
-      f_cfg2=$cfg_P4_reco ; n_cfg2=$name_P4_reco
-      f_cfg3=$cfg_P4_auto ; n_cfg3=$name_P4_auto
-      f_cfg4=""           ; n_cfg4=""
-      f_cfg5=""           ; n_cfg5=""
-      f_cfg6=""           ; n_cfg6=""
-    ;;
-  esac
-  selection=$(dialog --title "$title" --backtitle "$backtitle" --menu \
-      "\n$sourcename\n\nWhich $1 config file would you like to view and edit?" \
-      20 70 6 \
-      "1"  "$n_cfg1" \
-      "2"  "$n_cfg2" \
-      "3"  "$n_cfg3" \
-      "4"  "$n_cfg4" \
-      "5"  "$n_cfg5" \
-      "6"  "$n_cfg6" \
-      3>&1 1>&2 2>&3 )
-        case "$selection" in
-          1) sourcefile=$f_cfg1 ;  sourcename=$n_cfg1 ;;
-          2) sourcefile=$f_cfg2 ;  sourcename=$n_cfg2 ;;
-          3) sourcefile=$f_cfg3 ;  sourcename=$n_cfg3 ;;
-          4) sourcefile=$f_cfg4 ;  sourcename=$n_cfg4 ;;
-          5) sourcefile=$f_cfg5 ;  sourcename=$n_cfg5 ;;
-          6) sourcefile=$f_cfg6 ;  sourcename=$n_cfg6 ;;
-          *) return ;;	  
-        esac
-     if ! [ "$sourcename" = "" ]; then
-       if [ $(filecheck $sourcefile) == "yes" ]; then
-         dialog --title "Your Selection..." --msgbox "\n$sourcename\n$sourcefile" 10 70
+  choosefile "$title" "\nWhich config file would you like to view and edit?"
+  sourcefile=$selfile
+  sourcename=$selname
+     if ! [ "$sourcename" = "" ] && [ $(filecheck $sourcefile) == "yes" ]; then
          buttonmenuitem=1
-       fi
      else
-       dialog --title "Your Selection..." --msgbox "\nVoid config selected. Cancelling" 10 70
-       return
+         buttonmenuitem=9
      fi
 }
-
-
-
-function buttonchoosegroup(){
-  local title
-  local selection
-  title="Button Mapping Group Selection"
-  sourcename=""
-  sourcefile=""
-  selection=$(dialog --title "$title" --backtitle "$backtitle" --menu \
-      "\nWhich config group would you like to view and edit?" \
-      20 70 4 \
-      "1"  "Player 1" \
-      "2"  "Player 2" \
-      "3"  "Player 3" \
-      "4"  "Player 4" \
-      3>&1 1>&2 2>&3 )
-        case "$selection" in
-          1) buttonchoosefile "Player1" ;;
-          2) buttonchoosefile "Player2" ;;
-          3) buttonchoosefile "Player3" ;;
-          4) buttonchoosefile "Player4" ;;
-          *) buttonmenuitem=9; return ;;
-        esac
-}
-
 
 
 function buttonmain(){
   buttonmenuitem=8
   while ! [[ $buttonmenuitem -eq 9 ]]; do
     case "$buttonmenuitem" in
-      0) buttonchoosegroup ;;
+#      0) buttonchoosegroup ;;
+      0) buttonchoosefile ;;
       1) buttonprep
          buttonmenuitem=2 ;;
       2) buttononoffmenu;;
@@ -1123,8 +912,8 @@ function buttonmain(){
 
 
 
-###########################
-############  BACKUP ######
+#############################
+############  BACKUP #######
 ###########################
 
 
@@ -1136,63 +925,19 @@ function restorebackup() {
   local originalfile
   local originalname
   title="Restore a Backup"
-  selection=$(dialog --title "$title" --backtitle "$backtitle" --menu \
-      "\n$sourcename\n\nWhich $1 config file would you like to restore from backup?" \
-      30 70 18 \
-      "1"  "$name_P1_norm" \
-      "2"  "$name_P1_reco" \
-      "3"  "$name_P1_auto" \
-      "4"  "$name_P2_norm" \
-      "5"  "$name_P2_reco" \
-      "6"  "$name_P2_auto" \
-      "7"  "$name_P3_norm" \
-      "8"  "$name_P3_reco" \
-      "9"  "$name_P3_auto" \
-      "10"  "$name_P4_norm" \
-      "11"  "$name_P4_reco" \
-      "12"  "$name_P4_auto" \
-      "13"  "$name_S1_norm" \
-      "14"  "$name_S1_reco" \
-      "15"  "$name_S1_auto" \
-      "16"  "$name_S2_norm" \
-      "17"  "$name_S2_reco" \
-      "18"  "$name_S2_auto" \
-      3>&1 1>&2 2>&3 )
-    case "$selection" in
-      1)  originalfile=$cfg_P1_norm ; originalname=$name_P1_norm ;;
-      2)  originalfile=$cfg_P1_reco ; originalname=$name_P1_reco ;;
-      3)  originalfile=$cfg_P1_auto ; originalname=$name_P1_auto ;;
-      4)  originalfile=$cfg_P2_norm ; originalname=$name_P2_norm ;;
-      5)  originalfile=$cfg_P2_reco ; originalname=$name_P2_reco ;;
-      6)  originalfile=$cfg_P2_auto ; originalname=$name_P2_auto ;;
-      7)  originalfile=$cfg_P3_norm ; originalname=$name_P3_norm ;;
-      8)  originalfile=$cfg_P3_reco ; originalname=$name_P3_reco ;;
-      9)  originalfile=$cfg_P3_auto ; originalname=$name_P3_auto ;;
-      10) originalfile=$cfg_P4_norm ; originalname=$name_P4_norm ;;
-      11) originalfile=$cfg_P4_reco ; originalname=$name_P4_reco ;;
-      12) originalfile=$cfg_P4_auto ; originalname=$name_P4_auto ;;
-      13) originalfile=$cfg_S1_norm ; originalname=$name_S1_norm ;;
-      14) originalfile=$cfg_S1_reco ; originalname=$name_S1_reco ;;
-      15) originalfile=$cfg_S1_auto ; originalname=$name_S1_auto ;;
-      16) originalfile=$cfg_S2_norm ; originalname=$name_S2_norm ;;
-      17) originalfile=$cfg_S2_reco ; originalname=$name_S2_reco ;;
-      18) originalfile=$cfg_S2_auto ; originalname=$name_S2_auto ;;
-      *)  return ;;	  
-    esac
-    if ! [ "$originalname" = "" ]; then
-      if [ $(filecheck "$originalfile.backup") == "yes" ]; then
-        dialog --title "Your Selection..." --msgbox "\n$originalname\n$originalfile" 10 70
-        yn=$(areyousure "overwrite this file with the backup?\n\n$originalfile")
-        if [ $yn = "0" ]; then
-          cp -pf "$originalfile.backup" "$originalfile"
-          dialog --title "$title" --msgbox "\nRestore of $originalfile from backup completed" 10 70
-        fi
+  choosefile "$title" "\nWhich $1 config file would you like to restore from backup?"
+  originalfile=$selfile
+  originalname=$selname
+  if ! [ "$originalname" = "" ] && [ $(filecheck $originalfile.backup) == "yes" ]; then
+      yn=$(areyousure "overwrite this file with the backup?\n\n$originalfile")
+      if [ $yn = "0" ]; then
+        cp -pf "$originalfile.backup" "$originalfile"
+        dialog --title "$title" --msgbox "\nRestore of $originalfile from backup completed" 10 70
       fi
-    else
-      dialog --title "Your Selection..." --msgbox "\nVoid config selected. Cancelling" 10 70
     fi
   backupmenuitem=0
 }
+
 
 
 function makebackup(){
@@ -1202,60 +947,15 @@ function makebackup(){
   local originalfile
   local originalname
   title="Make a Backup"
-  selection=$(dialog --title "$title" --backtitle "$backtitle" --menu \
-      "\n$sourcename\n\nWhich $1 config file would you like to backup?" \
-      30 70 18 \
-      "1"  "$name_P1_norm" \
-      "2"  "$name_P1_reco" \
-      "3"  "$name_P1_auto" \
-      "4"  "$name_P2_norm" \
-      "5"  "$name_P2_reco" \
-      "6"  "$name_P2_auto" \
-      "7"  "$name_P3_norm" \
-      "8"  "$name_P3_reco" \
-      "9"  "$name_P3_auto" \
-      "10"  "$name_P4_norm" \
-      "11"  "$name_P4_reco" \
-      "12"  "$name_P4_auto" \
-      "13"  "$name_S1_norm" \
-      "14"  "$name_S1_reco" \
-      "15"  "$name_S1_auto" \
-      "16"  "$name_S2_norm" \
-      "17"  "$name_S2_reco" \
-      "18"  "$name_S2_auto" \
-      3>&1 1>&2 2>&3 )
-    case "$selection" in
-      1)  originalfile=$cfg_P1_norm ; originalname=$name_P1_norm ;;
-      2)  originalfile=$cfg_P1_reco ; originalname=$name_P1_reco ;;
-      3)  originalfile=$cfg_P1_auto ; originalname=$name_P1_auto ;;
-      4)  originalfile=$cfg_P2_norm ; originalname=$name_P2_norm ;;
-      5)  originalfile=$cfg_P2_reco ; originalname=$name_P2_reco ;;
-      6)  originalfile=$cfg_P2_auto ; originalname=$name_P2_auto ;;
-      7)  originalfile=$cfg_P3_norm ; originalname=$name_P3_norm ;;
-      8)  originalfile=$cfg_P3_reco ; originalname=$name_P3_reco ;;
-      9)  originalfile=$cfg_P3_auto ; originalname=$name_P3_auto ;;
-      10) originalfile=$cfg_P4_norm ; originalname=$name_P4_norm ;;
-      11) originalfile=$cfg_P4_reco ; originalname=$name_P4_reco ;;
-      12) originalfile=$cfg_P4_auto ; originalname=$name_P4_auto ;;
-      13) originalfile=$cfg_S1_norm ; originalname=$name_S1_norm ;;
-      14) originalfile=$cfg_S1_reco ; originalname=$name_S1_reco ;;
-      15) originalfile=$cfg_S1_auto ; originalname=$name_S1_auto ;;
-      16) originalfile=$cfg_S2_norm ; originalname=$name_S2_norm ;;
-      17) originalfile=$cfg_S2_reco ; originalname=$name_S2_reco ;;
-      18) originalfile=$cfg_S2_auto ; originalname=$name_S2_auto ;;
-      *)  return ;;	  
-    esac
-    if ! [ "$originalname" = "" ]; then
-      if [ $(filecheck $originalfile) == "yes" ]; then
-        dialog --title "Your Selection..." --msgbox "\n$originalname\n$originalfile" 10 70
-        yn=$(areyousure "make a backup of this file?\n If a backup with the extenstion \".backup\" already exists, it will be replaced.")
-        if [ $yn = "0" ]; then
-          cp -pf "$originalfile" "$originalfile.backup"
-          dialog --title "$title" --msgbox "\nBackup of $originalfile completed" 10 70
-        fi
+  choosefile "$title" "\nWhich $1 config file would you like to backup?"
+  originalfile=$selfile
+  originalname=$selname
+  if ! [ "$originalname" = "" ] && [ $(filecheck $originalfile) == "yes" ]; then
+      yn=$(areyousure "make a backup of this file?\n If a backup with the extenstion \".backup\" already exists, it will be replaced.")
+      if [ $yn = "0" ]; then
+        cp -pf "$originalfile" "$originalfile.backup"
+        dialog --title "$title" --msgbox "\nBackup of $originalfile completed" 10 70
       fi
-    else
-      dialog --title "Your Selection..." --msgbox "\nVoid config selected. Cancelling" 10 70
     fi
   backupmenuitem=0
 }
@@ -1299,9 +999,10 @@ function backupmain(){
 
 
 
-###########################
-############  MAIN   ######
-###########################
+##############################
+############  MAIN   ########
+############################
+
 
 
 function frontmenu(){
@@ -1328,17 +1029,11 @@ function frontmenu(){
 }
 
 
-###########################
-############  START  ######
+
+#############################
+############  START  #######
 ###########################
 
 prep
 frontmenu
 post
-
-
-### to do list ###
-### add a facility to copy settings between cfgs in recoil and camera sections  ###
-### button mapping section ###
-
-
