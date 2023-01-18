@@ -1,4 +1,4 @@
-# Sinden_Lightgun_Config_Editor (v1.05)
+# Sinden_Lightgun_Config_Editor (v1.06)
 A utility to edit the Sinden Lightgun .config files from EmulationStation with a controller or keyboard.
 
 ## How to install
