@@ -3,7 +3,7 @@
 ######################################################################
 ##
 ##   Config Editor for Sinden Lightgun
-##   v1.06    January 2023
+##   v1.07    January 2023
 ##   -- By Widge
 ##
 ##   For use with Sinden v1.8 config files
@@ -16,27 +16,49 @@
 ############  GLOBAL ######
 ###########################
 
-backtitle="Config Editor for Sinden Lightgun v1.06 -- By Widge"
+backtitle="Config Editor for Sinden Lightgun v1.07 -- By Widge"
+utilscfg="/home/pi/Lightgun/utils/widgeutils.cfg"
 
-cfg_P1_norm="/home/pi/Lightgun/Player1/LightgunMono.exe.config"                ;  name_P1_norm="Player 1 - No Recoil"
-cfg_P1_reco="/home/pi/Lightgun/Player1recoil/LightgunMono.exe.config"          ;  name_P1_reco="Player 1 - Single Recoil"
-cfg_P1_auto="/home/pi/Lightgun/Player1recoilauto/LightgunMono.exe.config"      ;  name_P1_auto="Player 1 - Auto Recoil"
-cfg_P2_norm="/home/pi/Lightgun/Player2/LightgunMono2.exe.config"               ;  name_P2_norm="Player 2 - No Recoil"
-cfg_P2_reco="/home/pi/Lightgun/Player2recoil/LightgunMono2.exe.config"         ;  name_P2_reco="Player 2 - Single Recoil"
-cfg_P2_auto="/home/pi/Lightgun/Player2recoilauto/LightgunMono2.exe.config"     ;  name_P2_auto="Player 2 - Auto Recoil"
-cfg_P3_norm="/home/pi/Lightgun/Player3/LightgunMono3.exe.config"               ;  name_P3_norm="Player 3 - No Recoil"
-cfg_P3_reco="/home/pi/Lightgun/Player3recoil/LightgunMono3.exe.config"         ;  name_P3_reco="Player 3 - Single Recoil"
-cfg_P3_auto="/home/pi/Lightgun/Player3recoilauto/LightgunMono3.exe.config"     ;  name_P3_auto="Player 3 - Auto Recoil"
-cfg_P4_norm="/home/pi/Lightgun/Player4recoil/LightgunMono4.exe.config"         ;  name_P4_norm="Player 4 - No Recoil"
-cfg_P4_reco="/home/pi/Lightgun/Player4recoil/LightgunMono4.exe.config"         ;  name_P4_reco="Player 4 - Single Recoil"
-cfg_P4_auto="/home/pi/Lightgun/Player4recoilauto/LightgunMono4.exe.config"     ;  name_P4_auto="Player 4 - Auto Recoil"
-cfg_S1_norm="/home/pi/Lightgun/SM3_Player1/LightgunMono.exe.config"            ;  name_S1_norm="Player 1 Supermodel - No Recoil"
-cfg_S1_reco="/home/pi/Lightgun/SM3_Player1recoil/LightgunMono.exe.config"      ;  name_S1_reco="Player 1 Supermodel - Single Recoil"
-cfg_S1_auto="/home/pi/Lightgun/SM3_Player1recoilauto/LightgunMono.exe.config"  ;  name_S1_auto="Player 1 Supermodel - Auto Recoil"
-cfg_S2_norm="/home/pi/Lightgun/SM3_Player2/LightgunMono2.exe.config"           ;  name_S2_norm=""
-cfg_S2_reco="/home/pi/Lightgun/SM3_Player2recoil/LightgunMono2.exe.config"     ;  name_S2_reco=""
-cfg_S2_auto="/home/pi/Lightgun/SM3_Player2recoilauto/LightgunMono2.exe.config" ;  name_S2_auto=""
+function grabber(){ grep "$1" "$2" | grep -o '".*"' | sed 's/"//g' ; }
 
+name_P1_norm="Player1 - NoRecoil"
+name_P1_reco="Player1 - SingleRecoil"
+name_P1_auto="Player1 - AutoRecoil"
+name_P2_norm="Player2 - NoRecoil"
+name_P2_reco="Player2 - SingleRecoil"
+name_P2_auto="Player2 - AutoRecoil"
+name_P3_norm="Player3 - NoRecoil"
+name_P3_reco="Player3 - SingleRecoil"
+name_P3_auto="Player3 - AutoRecoil"
+name_P4_norm="Player4 - NoRecoil"
+name_P4_reco="Player4 - SingleRecoil"
+name_P4_auto="Player4 - AutoRecoil"
+name_S1_norm="Player1 Supermodel - NoRecoil"
+name_S1_reco="Player1 Supermodel - SingleRecoil"
+name_S1_auto="Player1 Supermodel - AutoRecoil"
+name_S2_norm="Player2 Supermodel - NoRecoil"
+name_S2_reco="Player2 Supermodel - SingleRecoil"
+name_S2_auto="Player2 Supermodel - AutoRecoil"
+
+
+cfg_P1_norm=$(grabber "<P1normal>" "$utilscfg")
+cfg_P1_reco=$(grabber "<P1recoil>" "$utilscfg")
+cfg_P1_auto=$(grabber "<P1auto>" "$utilscfg")
+cfg_P2_norm=$(grabber "<P2normal>" "$utilscfg")
+cfg_P2_reco=$(grabber "<P2recoil>" "$utilscfg")
+cfg_P2_auto=$(grabber "<P2auto>" "$utilscfg")
+cfg_P3_norm=$(grabber "<P3normal>" "$utilscfg")
+cfg_P3_reco=$(grabber "<P3recoil>" "$utilscfg")
+cfg_P3_auto=$(grabber "<P3auto>" "$utilscfg")
+cfg_P4_norm=$(grabber "<P4normal>" "$utilscfg")
+cfg_P4_reco=$(grabber "<P4recoil>" "$utilscfg")
+cfg_P4_auto=$(grabber "<P4auto>" "$utilscfg")
+cfg_S1_norm=$(grabber "<S1normal>" "$utilscfg")
+cfg_S1_reco=$(grabber "<S1recoil>" "$utilscfg")
+cfg_S1_auto=$(grabber "<S1auto>" "$utilscfg")
+cfg_S2_norm=$(grabber "<S2normal>" "$utilscfg")
+cfg_S2_reco=$(grabber "<S2recoil>" "$utilscfg")
+cfg_S2_auto=$(grabber "<S2auto>" "$utilscfg")
 
 
 
