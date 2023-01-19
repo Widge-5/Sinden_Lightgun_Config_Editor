@@ -141,7 +141,7 @@ function choosefile() { # [title] [message]
   local choicename
   local yn
   local destfile
-  selection=$(dialog --title "$1" --backtitle "$backtitle" --menu "$2" 25 70 18 \
+  selection=$(dialog --title "$1" --backtitle "$backtitle" --menu "$2" 28 70 18 \
       "1"   "$name_P1_norm" \
       "2"   "$name_P1_reco" \
       "3"   "$name_P1_auto" \
