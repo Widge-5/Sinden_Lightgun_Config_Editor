@@ -149,6 +149,7 @@ echo $thisfile
   cp -pf "$tmpfolder/Sinden_Lightgun_Config_Editor-main/Sinden Lightgun Config Editor.sh" $sindenfolder
   tidyup "$tmpfolder"
   cfgmaker
+  chown -R pi:pi "$destfolder"
   colourecho cLCYAN  "Install completed"
   while true ; do
     colourecho cLCYAN  "Do you want to delete this installer?"
