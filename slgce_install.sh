@@ -13,6 +13,7 @@ repo="https://github.com/Widge-5/Sinden_Lightgun_Config_Editor/archive/refs/head
 tmpfolder="/home/pi/slgce_install"
 destfolder="/home/pi/Lightgun/utils"
 sindenfolder="/home/pi/RetroPie/roms"
+utilscfg="widgeutils.cfg"
 title="BareBones Screen Aspect Adaptation Utility"
 
 
@@ -86,6 +87,37 @@ function dloverlays() {
 }
 
 
+function builder() { if ! grep -Fq "$1" "$3" ; then echo "$1=\"$2\"" >> $3 ; fi ; }
+
+function cfgmaker() {
+  if [ ! -f "$destfolder/$utilscfg" ]; then
+    echo > $destfolder/$utilscfg
+  fi
+  if  ! grep -Fq "[ CONFIG LOCATIONS ]" "$destfolder/$utilscfg" ; then
+    echo "[ CONFIG LOCATIONS ] S1 & S2 are Supermodel-specific configs." >> $destfolder/$utilscfg
+    echo >> $destfolder/$utilscfg
+  fi
+  builder "<P1normal>" "/home/pi/Lightgun/Player1/LightgunMono.exe.config" "$destfolder/$utilscfg"
+  builder "<P1recoil>" "/home/pi/Lightgun/Player1recoil/LightgunMono.exe.config" "$destfolder/$utilscfg"
+  builder "<P1auto>" "/home/pi/Lightgun/Player1recoilauto/LightgunMono.exe.config" "$destfolder/$utilscfg"
+  builder "<P2normal>" "/home/pi/Lightgun/Player2/LightgunMono2.exe.config" "$destfolder/$utilscfg"
+  builder "<P2recoil>" "/home/pi/Lightgun/Player2recoil/LightgunMono2.exe.config" "$destfolder/$utilscfg"
+  builder "<P2auto>" "/home/pi/Lightgun/Player2recoilauto/LightgunMono2.exe.config" "$destfolder/$utilscfg"
+  builder "<P3normal>" "/home/pi/Lightgun/Player3/LightgunMono3.exe.config" "$destfolder/$utilscfg"
+  builder "<P3recoil>" "/home/pi/Lightgun/Player3recoil/LightgunMono3.exe.config" "$destfolder/$utilscfg"
+  builder "<P3auto>" "/home/pi/Lightgun/Player3recoilauto/LightgunMono3.exe.config" "$destfolder/$utilscfg"
+  builder "<P4normal>" "/home/pi/Lightgun/Player4recoil/LightgunMono4.exe.config" "$destfolder/$utilscfg"
+  builder "<P4recoil>" "/home/pi/Lightgun/Player4recoil/LightgunMono4.exe.config" "$destfolder/$utilscfg"
+  builder "<P4auto>" "/home/pi/Lightgun/Player4recoilauto/LightgunMono4.exe.config" "$destfolder/$utilscfg"
+  builder "<S1normal>" "/home/pi/Lightgun/SM3_Player1/LightgunMono.exe.config" "$destfolder/$utilscfg"
+  builder "<S1recoil>" "/home/pi/Lightgun/SM3_Player1recoil/LightgunMono.exe.config" "$destfolder/$utilscfg"
+  builder "<S1auto>" "/home/pi/Lightgun/SM3_Player1recoilauto/LightgunMono.exe.config" "$destfolder/$utilscfg"
+  builder "<S2normal>" "/home/pi/Lightgun/SM3_Player2/LightgunMono2.exe.config" "$destfolder/$utilscfg"
+  builder "<S2recoil>" "/home/pi/Lightgun/SM3_Player2recoil/LightgunMono2.exe.config" "$destfolder/$utilscfg"
+  echo >> $destfolder/$utilscfg
+  echo >> $destfolder/$utilscfg
+}
+
 
 function main() {
 echo $thisfile
@@ -109,14 +141,17 @@ echo $thisfile
   downloader "Config Editor for Sinden Lightgun" "$tmpfolder" "$repo"
   cd "$tmpfolder/Sinden_Lightgun_Config_Editor-main"
   chmod +x *.sh
-  mkdir "$destfolder"
+  if [ ! -d "$destfolder" ]; then
+    mkdir "$destfolder"
+  fi
   cp -pf "$tmpfolder/Sinden_Lightgun_Config_Editor-main/sindenconfigedit.sh" $destfolder
   cp -pf "$tmpfolder/Sinden_Lightgun_Config_Editor-main/recoiltcs.txt" $destfolder
   cp -pf "$tmpfolder/Sinden_Lightgun_Config_Editor-main/Sinden Lightgun Config Editor.sh" $sindenfolder
   tidyup "$tmpfolder"
+  cfgmaker
   colourecho cLCYAN  "Install completed"
   while true ; do
-    colourecho cLCYAN  "Do you want to delete this instaler?"
+    colourecho cLCYAN  "Do you want to delete this installer?"
     colourecho cLGREEN "[Y] Yes"
     colourecho cLGREEN "[N] No"
     read -N1 ans
@@ -137,3 +172,6 @@ echo $thisfile
 
 rootcheck
 main
+
+
+
