@@ -26,4 +26,4 @@ The install script will offer to delete itself then you will be prompted to rest
 ## What to expect
 In the Sinden (or Ports) group, you will find a new script available called Sinden Lightgun Config Editor.  Executing this script will launch a menu system that will enable you to edit recoil settings, camera settings and button mapping for each of your Sinden Lightgun configs using a keyboard or a control pad.  The menu also offers a facility to make backups of your configs, to restore those backups and even to transfer settings between config files.
 
-The utility is pre-configured with the addresses of the Lightgun config files as they are in barebones.  If your config files are in another location then you should edit the variables the config file at `/home/pi/Lightgun/utils/widgeutils.cfg`.
+The utility is pre-configured with the addresses of the Lightgun config files as they are in barebones.  If your config files are in another location then you should edit the variables in the config file at `/home/pi/Lightgun/utils/widgeutils.cfg`.
