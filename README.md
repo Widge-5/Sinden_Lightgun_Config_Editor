@@ -1,7 +1,9 @@
-# Sinden_Lightgun_Config_Editor (v1.07)
+# Sinden_Lightgun_Config_Editor (v1.08)
 A utility to edit the Sinden Lightgun .config files from EmulationStation with a controller or keyboard.
 
 ## How to install
+**If you already have an older version of the install script, you should delete it first. It will not be overwritten by the wget command below**
+
 If running from the Pi itself with a connected keyboard, press `F4` to exit EmulationStation and reach the command line.
 
 Or you can connect to your Pi via SSH using a reliable utility such as PuTTY.
