@@ -3,7 +3,7 @@
 ######################################################################
 ##
 ##   Config Editor for Sinden Lightgun
-##   v1.07    January 2023
+##   v1.08    January 2023
 ##   -- By Widge
 ##
 ##   For use with Sinden v1.8 config files
@@ -16,8 +16,42 @@
 ############  GLOBAL ######
 ###########################
 
-backtitle="Config Editor for Sinden Lightgun v1.07 -- By Widge"
+backtitle="Config Editor for Sinden Lightgun v1.08 -- By Widge"
 utilscfg="/home/pi/Lightgun/utils/widgeutils.cfg"
+
+
+function builder() { if ! grep -Fq "$1" "$3" ; then echo "$1=\"$2\"" >> $3 ; fi ; }
+
+function cfgmaker() {
+  if [ ! -f "$utilscfg" ]; then
+    echo > $utilscfg
+  fi
+  if  ! grep -Fq "[ CONFIG LOCATIONS ]" "$utilscfg" ; then
+    echo "[ CONFIG LOCATIONS ] S1 & S2 are Supermodel-specific configs." >> $utilscfg
+    echo >> $utilscfg
+  fi
+  builder "<P1normal>" "/home/pi/Lightgun/Player1/LightgunMono.exe.config" "$utilscfg"
+  builder "<P1recoil>" "/home/pi/Lightgun/Player1recoil/LightgunMono.exe.config" "$utilscfg"
+  builder "<P1auto>" "/home/pi/Lightgun/Player1recoilauto/LightgunMono.exe.config" "$utilscfg"
+  builder "<P2normal>" "/home/pi/Lightgun/Player2/LightgunMono2.exe.config" "$utilscfg"
+  builder "<P2recoil>" "/home/pi/Lightgun/Player2recoil/LightgunMono2.exe.config" "$utilscfg"
+  builder "<P2auto>" "/home/pi/Lightgun/Player2recoilauto/LightgunMono2.exe.config" "$utilscfg"
+  builder "<P3normal>" "/home/pi/Lightgun/Player3/LightgunMono3.exe.config" "$utilscfg"
+  builder "<P3recoil>" "/home/pi/Lightgun/Player3recoil/LightgunMono3.exe.config" "$utilscfg"
+  builder "<P3auto>" "/home/pi/Lightgun/Player3recoilauto/LightgunMono3.exe.config" "$utilscfg"
+  builder "<P4normal>" "/home/pi/Lightgun/Player4recoil/LightgunMono4.exe.config" "$utilscfg"
+  builder "<P4recoil>" "/home/pi/Lightgun/Player4recoil/LightgunMono4.exe.config" "$utilscfg"
+  builder "<P4auto>" "/home/pi/Lightgun/Player4recoilauto/LightgunMono4.exe.config" "$utilscfg"
+  builder "<S1normal>" "/home/pi/Lightgun/SM3_Player1/LightgunMono.exe.config" "$utilscfg"
+  builder "<S1recoil>" "/home/pi/Lightgun/SM3_Player1recoil/LightgunMono.exe.config" "$utilscfg"
+  builder "<S2normal>" "/home/pi/Lightgun/SM3_Player2/LightgunMono2.exe.config" "$utilscfg"
+  builder "<S2recoil>" "/home/pi/Lightgun/SM3_Player2recoil/LightgunMono2.exe.config" "$utilscfg"
+  builder "<S1auto>" "/home/pi/Lightgun/SM3_Player1recoilauto/LightgunMono.exe.config" "$utilscfg"
+  echo >> $utilscfg
+  echo >> $utilscfg
+}
+
+
 
 function grabber(){ grep "$1" "$2" | grep -o '".*"' | sed 's/"//g' ; }
 
@@ -41,35 +75,38 @@ name_S2_reco="Player2 Supermodel - SingleRecoil"
 name_S2_auto="Player2 Supermodel - AutoRecoil"
 
 
-cfg_P1_norm=$(grabber "<P1normal>" "$utilscfg")
-cfg_P1_reco=$(grabber "<P1recoil>" "$utilscfg")
-cfg_P1_auto=$(grabber "<P1auto>" "$utilscfg")
-cfg_P2_norm=$(grabber "<P2normal>" "$utilscfg")
-cfg_P2_reco=$(grabber "<P2recoil>" "$utilscfg")
-cfg_P2_auto=$(grabber "<P2auto>" "$utilscfg")
-cfg_P3_norm=$(grabber "<P3normal>" "$utilscfg")
-cfg_P3_reco=$(grabber "<P3recoil>" "$utilscfg")
-cfg_P3_auto=$(grabber "<P3auto>" "$utilscfg")
-cfg_P4_norm=$(grabber "<P4normal>" "$utilscfg")
-cfg_P4_reco=$(grabber "<P4recoil>" "$utilscfg")
-cfg_P4_auto=$(grabber "<P4auto>" "$utilscfg")
-cfg_S1_norm=$(grabber "<S1normal>" "$utilscfg")
-cfg_S1_reco=$(grabber "<S1recoil>" "$utilscfg")
-cfg_S1_auto=$(grabber "<S1auto>" "$utilscfg")
-cfg_S2_norm=$(grabber "<S2normal>" "$utilscfg")
-cfg_S2_reco=$(grabber "<S2recoil>" "$utilscfg")
-cfg_S2_auto=$(grabber "<S2auto>" "$utilscfg")
-
-
 
 function prep() {
+  cfgmaker
+  cfg_P1_norm=$(grabber "<P1normal>" "$utilscfg")
+  cfg_P1_reco=$(grabber "<P1recoil>" "$utilscfg")
+  cfg_P1_auto=$(grabber "<P1auto>" "$utilscfg")
+  cfg_P2_norm=$(grabber "<P2normal>" "$utilscfg")
+  cfg_P2_reco=$(grabber "<P2recoil>" "$utilscfg")
+  cfg_P2_auto=$(grabber "<P2auto>" "$utilscfg")
+  cfg_P3_norm=$(grabber "<P3normal>" "$utilscfg")
+  cfg_P3_reco=$(grabber "<P3recoil>" "$utilscfg")
+  cfg_P3_auto=$(grabber "<P3auto>" "$utilscfg")
+  cfg_P4_norm=$(grabber "<P4normal>" "$utilscfg")
+  cfg_P4_reco=$(grabber "<P4recoil>" "$utilscfg")
+  cfg_P4_auto=$(grabber "<P4auto>" "$utilscfg")
+  cfg_S1_norm=$(grabber "<S1normal>" "$utilscfg")
+  cfg_S1_reco=$(grabber "<S1recoil>" "$utilscfg")
+  cfg_S1_auto=$(grabber "<S1auto>" "$utilscfg")
+  cfg_S2_norm=$(grabber "<S2normal>" "$utilscfg")
+  cfg_S2_reco=$(grabber "<S2recoil>" "$utilscfg")
+  cfg_S2_auto=$(grabber "<S2auto>" "$utilscfg")
   /opt/retropie/admin/joy2key/joy2key start
 }
 
+
+
 function post() {
   /opt/retropie/admin/joy2key/joy2key stop
-  dialog --infobox "\nRestart your guns for any changes to take effect." 5 55 3>&1 1>&2 2>&3
-  sleep 3
+  if [ ! $(grabber "<AutostartEnable>" "$utilscfg") = "1" ]; then
+    dialog --infobox "\nRestart your guns for any changes to take effect." 5 55 3>&1 1>&2 2>&3
+    sleep 3
+  fi
   clear
 }
 
@@ -244,8 +281,8 @@ yn=$(areyousure "go through with this transfer?")
 
 
 
-###########################
-############  RECOIL ######
+#############################
+############  RECOIL #######
 ###########################
 
 function saverecoil() {
@@ -329,7 +366,7 @@ function recoilvalues() {
   fi
   selection=$(dialog --cancel-label " Back " --title "$title" --backtitle "$backtitle" --menu \
     "\nChoose which setting you want to edit.\nThe current value is shown alongside the option." \
-    20 70 6 \
+    20 70 7 \
       "1"  "Recoil Type ($n_recoiltype)" \
       "2"  "Single Recoil Strength ($v_singlestrength)" \
       "3"  "Auto Recoil Strength ($v_autostrength)" \
@@ -928,9 +965,6 @@ function buttonmain(){
     esac
   done
 }
-
-
-
 
 
 
