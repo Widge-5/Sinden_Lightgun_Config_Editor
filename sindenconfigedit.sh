@@ -483,7 +483,7 @@ function recoilmenu(){
              fi ;;
           6) yn=$(areyousure "withdraw your agreement to the terms of the licence? This will disable recoil functionality.")
              if [ $yn == "0" ]; then
-               applychange $s_agreeterms   0 $sourcefile
+               applychange $sourcefile $s_agreeterms 0 
                recoilprep
                saverecoil
                recoilmenuitem=2
